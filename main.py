@@ -482,7 +482,7 @@ def main() -> None:
     logger.info("Bot đã dừng an toàn.")
 
 
-if _name_ == "_ _main_ _":
+if_ _name_ _ == "_ _main_ _":
     try:
         main()
     except Exception as exc:
