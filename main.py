@@ -20,7 +20,7 @@ APPLE_URL = os.getenv(
 )
 BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
 CHAT_ID = os.getenv("CHAT_ID", "").strip()
-CHECK_INTERVAL = max(30, int(os.getenv("CHECK_INTERVAL", "60")))
+CHECK_INTERVAL = max(10, int(os.getenv("CHECK_INTERVAL", "10")))
 KEYWORDS = [x.strip().lower() for x in os.getenv("KEYWORDS", "").split(",") if x.strip()]
 SEND_STARTUP_MESSAGE = os.getenv("SEND_STARTUP_MESSAGE", "true").lower() in {
     "1", "true", "yes", "on"
