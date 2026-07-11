@@ -488,5 +488,3 @@ if _name_ == "_main_":
     except Exception as exc:
         logger.exception("Bot không thể khởi động: %s", exc)
         sys.exit(1)
-Soạn
-Viết cho Luong van Sam
