@@ -16,7 +16,7 @@ from bs4 import BeautifulSoup
 BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
 CHAT_ID = os.getenv("CHAT_ID", "").strip()
 CHECK_INTERVAL = max(10, int(os.getenv("CHECK_INTERVAL", "10")))
-RAKUTEN_INTERVAL = max(10, int(os.getenv("RAKUTEN_INTERVAL", "10")))
+RAKUTEN_INTERVAL = max(30, int(os.getenv("RAKUTEN_INTERVAL", "30")))
 YAHOO_INTERVAL = max(10, int(os.getenv("YAHOO_INTERVAL", "10")))
 SEND_STARTUP_MESSAGE = os.getenv("SEND_STARTUP_MESSAGE", "true").lower() in {"1", "true", "yes", "on"}
 
@@ -36,7 +36,7 @@ RAKUTEN_KEYWORDS = [
 ]
 RAKUTEN_MAX_PRICE = int(os.getenv("RAKUTEN_MAX_PRICE", "30000"))
 RAKUTEN_HITS = min(30, max(1, int(os.getenv("RAKUTEN_HITS", "30"))))
-RAKUTEN_ENDPOINT = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601"
+RAKUTEN_ENDPOINT = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260701"
 YAHOO_URLS = [
     x.strip()
     for x in os.getenv(
