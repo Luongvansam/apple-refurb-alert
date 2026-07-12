@@ -36,8 +36,7 @@ RAKUTEN_KEYWORDS = [
 ]
 RAKUTEN_MAX_PRICE = int(os.getenv("RAKUTEN_MAX_PRICE", "30000"))
 RAKUTEN_HITS = min(30, max(1, int(os.getenv("RAKUTEN_HITS", "30"))))
-RAKUTEN_ENDPOINT = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260701"
-
+RAKUTEN_ENDPOINT = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601"
 YAHOO_URLS = [
     x.strip()
     for x in os.getenv(
