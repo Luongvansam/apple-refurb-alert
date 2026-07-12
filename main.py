@@ -16,8 +16,8 @@ from bs4 import BeautifulSoup
 BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
 CHAT_ID = os.getenv("CHAT_ID", "").strip()
 CHECK_INTERVAL = max(10, int(os.getenv("CHECK_INTERVAL", "10")))
-RAKUTEN_INTERVAL = max(10, int(os.getenv("RAKUTEN_INTERVAL", "10")))
-YAHOO_INTERVAL = max(10, int(os.getenv("YAHOO_INTERVAL", "10")))
+RAKUTEN_INTERVAL = max(30, int(os.getenv("RAKUTEN_INTERVAL", "60")))
+YAHOO_INTERVAL = max(30, int(os.getenv("YAHOO_INTERVAL", "60")))
 SEND_STARTUP_MESSAGE = os.getenv("SEND_STARTUP_MESSAGE", "true").lower() in {"1", "true", "yes", "on"}
 
 APPLE_URL = os.getenv("APPLE_URL", "https://www.apple.com/jp/shop/refurbished/iphone").strip()
