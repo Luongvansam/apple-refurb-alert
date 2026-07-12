@@ -185,7 +185,7 @@ def fetch_rakuten_query(keyword: str) -> Dict[str, Product]:
     if RAKUTEN_AFFILIATE_ID:
         params["affiliateId"] = RAKUTEN_AFFILIATE_ID
 
-    response = requests.get(RAKUTEN_ENDPOINT, params=params, headers=HEADERS, timeout=30)
+    response = requests.get(RAKUTEN_ENDPOINT, params=params, timeout=30)
     response.raise_for_status()
     payload = response.json()
     products: Dict[str, Product] = {}
