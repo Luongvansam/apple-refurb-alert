@@ -304,14 +304,18 @@ def main() -> None:
             if now - last_check[name] < intervals[name]:
                 continue
             last_check[name] = now
-            try:
+       try:
                 previous[name] = run_source(name, fetcher, previous[name])
                 errors[name] = 0
- except Exception as exc:
+            except Exception as exc:
                 errors[name] += 1
-                logger.exception("%s lỗi lần %d: %s", name, errors[name], exc)
+                logger.exception(
+                    "%s lỗi lần %d: %s",
+                    name,
+                    errors[name],
+                    exc,
+                )
 
-                # Rakuten bị 403: chỉ ghi log, không gửi Telegram
                 if name == "Rakuten" and "403" in str(exc):
                     continue
 
@@ -319,11 +323,13 @@ def main() -> None:
                     try:
                         telegram_send(
                             f"⚠️ <b>{html.escape(name)} đang gặp lỗi</b>\n\n"
-                            f"{html.escape(str(exc))}\n\nBot sẽ tự thử lại."
+                            f"{html.escape(str(exc))}\n\n"
+                            "Bot sẽ tự thử lại."
                         )
                     except Exception:
                         logger.exception(
-                            "Không gửi được lỗi %s lên Telegram.", name
+                            "Không gửi được lỗi %s lên Telegram.",
+                            name,
                         )
 
     logger.info("Bot đã dừng an toàn.")
