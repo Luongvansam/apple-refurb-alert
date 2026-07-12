@@ -308,16 +308,22 @@ def main() -> None:
                 previous[name] = run_source(name, fetcher, previous[name])
                 errors[name] = 0
             except Exception as exc:
-                errors[name] += 1
-                logger.exception("%s lỗi lần %d: %s", name, errors[name], exc)
-                if errors[name] in {3, 10}:
-                    try:
-                        telegram_send(
-                            f"⚠️ <b>{html.escape(name)} đang gặp lỗi</b>\n\n"
-                            f"{html.escape(str(exc))}\n\nBot sẽ tự thử lại."
-                        )
-                    except Exception:
-                        logger.exception("Không gửi được lỗi %s lên Telegram.", name)
+    errors[name] += 1
+    logger.exception("%s lỗi lần %d: %s", name, errors[name], exc)
+
+    # Rakuten đang bị 403: chỉ ghi log, không gửi Telegram
+    if name == "Rakuten" and "403" in str(exc):
+        continue
+
+    if errors[name] in {3, 10}:
+        try:
+            telegram_send(
+                f"⚠️ <b>{html.escape(name)} đang gặp lỗi</b>\n\n"
+                f"{html.escape(str(exc))}\n\nBot sẽ tự thử lại."
+            )
+        except Exception:
+            logger.exception("Không gửi được lỗi %s lên Telegram.", name)
+
         time.sleep(1)
 
     logger.info("Bot đã dừng an toàn.")
