@@ -16,8 +16,8 @@ from bs4 import BeautifulSoup
 BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
 CHAT_ID = os.getenv("CHAT_ID", "").strip()
 CHECK_INTERVAL = max(10, int(os.getenv("CHECK_INTERVAL", "10")))
-RAKUTEN_INTERVAL = max(30, int(os.getenv("RAKUTEN_INTERVAL", "30")))
-YAHOO_INTERVAL = max(10, int(os.getenv("YAHOO_INTERVAL", "10")))
+RAKUTEN_INTERVAL = max(30, int(os.getenv("RAKUTEN_INTERVAL", "60")))
+YAHOO_INTERVAL = max(30, int(os.getenv("YAHOO_INTERVAL", "60")))
 SEND_STARTUP_MESSAGE = os.getenv("SEND_STARTUP_MESSAGE", "true").lower() in {"1", "true", "yes", "on"}
 
 APPLE_URL = os.getenv("APPLE_URL", "https://www.apple.com/jp/shop/refurbished/iphone").strip()
@@ -37,6 +37,7 @@ RAKUTEN_KEYWORDS = [
 RAKUTEN_MAX_PRICE = int(os.getenv("RAKUTEN_MAX_PRICE", "30000"))
 RAKUTEN_HITS = min(30, max(1, int(os.getenv("RAKUTEN_HITS", "30"))))
 RAKUTEN_ENDPOINT = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20260701"
+
 YAHOO_URLS = [
     x.strip()
     for x in os.getenv(
@@ -185,7 +186,7 @@ def fetch_rakuten_query(keyword: str) -> Dict[str, Product]:
     if RAKUTEN_AFFILIATE_ID:
         params["affiliateId"] = RAKUTEN_AFFILIATE_ID
 
-    response = requests.get(RAKUTEN_ENDPOINT, params=params, timeout=30)
+    response = requests.get(RAKUTEN_ENDPOINT, params=params, headers=HEADERS, timeout=30)
     response.raise_for_status()
     payload = response.json()
     products: Dict[str, Product] = {}
@@ -304,33 +305,21 @@ def main() -> None:
             if now - last_check[name] < intervals[name]:
                 continue
             last_check[name] = now
-       try:
+            try:
                 previous[name] = run_source(name, fetcher, previous[name])
                 errors[name] = 0
             except Exception as exc:
                 errors[name] += 1
-                logger.exception(
-                    "%s lỗi lần %d: %s",
-                    name,
-                    errors[name],
-                    exc,
-                )
-
-                if name == "Rakuten" and "403" in str(exc):
-                    continue
-
+                logger.exception("%s lỗi lần %d: %s", name, errors[name], exc)
                 if errors[name] in {3, 10}:
                     try:
                         telegram_send(
                             f"⚠️ <b>{html.escape(name)} đang gặp lỗi</b>\n\n"
-                            f"{html.escape(str(exc))}\n\n"
-                            "Bot sẽ tự thử lại."
+                            f"{html.escape(str(exc))}\n\nBot sẽ tự thử lại."
                         )
                     except Exception:
-                        logger.exception(
-                            "Không gửi được lỗi %s lên Telegram.",
-                            name,
-                        )
+                        logger.exception("Không gửi được lỗi %s lên Telegram.", name)
+        time.sleep(1)
 
     logger.info("Bot đã dừng an toàn.")
 
