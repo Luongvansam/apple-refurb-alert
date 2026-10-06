@@ -128,6 +128,7 @@ def fetch_apple_products() -> Dict[str, Product]:
     response.raise_for_status()
     soup = BeautifulSoup(response.text, "html.parser")
     products: Dict[str, Product] = {}
+    parsed_iphone_count = 0
 
     for link in soup.select('a[href*="/shop/product/"]'):
         href = str(link.get("href", "")).strip()
@@ -147,14 +148,17 @@ def fetch_apple_products() -> Dict[str, Product]:
             heading = container.find(["h2", "h3", "h4"])
             if heading:
                 name = normalize_text(heading.get_text(" ", strip=True))
-        if not name or "iPhone" not in name or not matches_apple_keywords(name):
+        if not name or "iPhone" not in name:
+            continue
+        parsed_iphone_count += 1
+        if not matches_apple_keywords(name):
             continue
         price_match = re.search(r"[\d,]+円", text)
         price = price_match.group(0) if price_match else "Không rõ giá"
         url = urljoin("https://www.apple.com", href).split("?")[0]
         products[url] = Product(url, name, price, url, source="Apple")
 
-    if not products:
+    if parsed_iphone_count == 0:
         raise RuntimeError("Không đọc được sản phẩm Apple; cấu trúc trang có thể đã đổi.")
     return products
 
@@ -257,6 +261,8 @@ def notify_new(previous: Dict[str, Product], current: Dict[str, Product]) -> Non
     for key in sorted(current.keys() - previous.keys()):
         product = current[key]
         telegram_send(product_message(product))
+        # Advance only successfully delivered items so partial failures do not repeat them.
+        previous[key] = product
         logger.info("Đã gửi cảnh báo: %s", product.name)
         time.sleep(1)
 
